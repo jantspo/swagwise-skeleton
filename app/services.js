@@ -66,7 +66,7 @@
                            // Get the product details from the ProductService using the guid
                             SwagService.get({id: id}, function(product){
                                 // Update the quantity to the quantity saved in the cookie
-                                product.quantity = parseInt(quantity) || 1;
+                                product.quantity = parseInt(quantity);
                                 // Add the product to the cart items object using the guid as the key
                                 items[product.id] = product;
                             });
@@ -118,7 +118,7 @@
                 var total = 0;
                 // Loop through items and increment the total by the item quantity
                 angular.forEach(items, function(item){
-                   total += parseInt(item.quantity);
+                   total += parseInt(item.quantity) || 1;
                 });
                 // Returns number of items, including item quantity
                 return total;
