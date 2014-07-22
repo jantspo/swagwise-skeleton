@@ -1,0 +1,14 @@
+ <div class="col-md-3" ng-repeat="item in swag">
+     <h4 ng-bind="item.title"></h4>
+     <div class="row">
+         <div class="col-xs-6 col-md-6">
+            <a ui-sref="product({id:item.id})"  class="thumbnail">
+                 <rotating-thumbnail images="item.images" title="{{item.title}}"></rotating-thumbnail>
+            </a>
+         </div>
+         <p ng-bind="item.description"></p>
+       </div>
+      <p><a class="btn btn-default" ui-sref="product({id:item.id})" role="button">View details <i class="glyphicon glyphicon-chevron-right"></i></a>
+        <add-cart-button item="item"></add-cart-button>
+      </p>
+ </div>

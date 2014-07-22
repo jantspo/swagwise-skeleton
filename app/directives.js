@@ -62,8 +62,61 @@
                scope.$on('$destroy', function(){
                    destroyRotator();
                });
-
            }
         };
     });
+
+    app.directive('productGroup', function(){
+       return{
+           scope: {
+               swag: '='
+           },
+           restrict: 'E',
+           replace: true,
+           templateUrl: 'templates/product-group.html'
+       }
+    });
+
+    app.directive('addCartButton', function(CartService){
+        return {
+            scope:{
+                item:"="
+            },
+            restrict: 'E',
+            replace: true,
+            templateUrl: 'templates/add-cart-button.html',
+            link: function(scope){
+                scope.addItem = function(){
+                    CartService.addItem(scope.item);
+                }
+            }
+        }
+    });
+    app.directive('miniCart', function(CartService) {
+
+        return {
+            // Create an isolated scope
+            scope: {
+            },
+            restrict: 'E',
+            replace: true,
+            templateUrl: 'templates/mini-cart.html',
+            link: function(scope) {
+
+                CartService.getItems();
+
+                scope.getCartSubtotal = function() {
+                    // Returns subtotal from CartService
+                    return CartService.getCartSubtotal();
+                };
+
+                scope.getItemCount = function() {
+                    //Returns the item count from the CartService
+                    return CartService.getItemCount();
+                };
+            }
+
+        };
+    });
+
 }) (window.angular);

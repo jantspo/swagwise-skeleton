@@ -1,13 +1,23 @@
 body {
     padding-top: 100px;
 }
+@media (max-width:970px){
+    .navbar-header{
+        height:100px;
+    }
+}
+@media screen and (min-width:970px) {
+    .navbar {
+        height: 100px;
 
-.navbar {
-    height: 100px;
+    }
 
+    .nav li a {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
 }
 
-.nav li a {
-    padding-top: 40px;
-    padding-bottom: 40px;
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    display: none !important;
 }

@@ -10,7 +10,14 @@
 </div>
 
 <div class="container">
-    <div class="row">
+    <div class="alert alert-warning" ng-show="!getItemCount()">
+        <p>There are no items in your cart
+            <a ui-sref="swag" class="btn btn-default">
+                <i class="glyphicon glyphicon-shopping-cart"></i> Continue Shopping
+            </a>
+        </p>
+    </div>
+    <div class="row" ng-show="getItemCount()">
 
         <div class="col-md-12">
 
@@ -30,21 +37,21 @@
                         <td class="col-sm-8 col-md-6">
                             <div class="media">
                                 <a class="thumbnail pull-left">
-                                    <img class="media-object" src="http://placehold.it/72x72" style="width: 72px; height: 72px;"> </a>
+                                    <img class="media-object" ng-src="assets/images/{{item.images[0]}}" alt="{{item.title}}" style="width: 72px; height: 72px;"> </a>
 
                                 <div class="media-body">
-                                    <h4 class="media-heading"><a href="#">Product title</a></h4>
-                                    <h5 class="media-heading"> by <a href="#">Manufacturer</a></h5>
+                                    <h4 class="media-heading"><a ng-bind="item.title">Product title</a></h4>
+                                    <h5 class="media-heading"> by <a ng-bind="item.manufacturer">Manufacturer</a></h5>
                                 </div>
                             </div>
                         </td>
                         <td class="col-sm-1 col-md-1 text-center">
-                            <input type="text" class="form-control" required>
+                            <input type="number" class="form-control" ng-model="item.quantity" ng-change="updateItem(item)" required >
                         </td>
-                        <td class="col-sm-1 col-md-1 text-center"><strong>$0.00</strong></td>
-                        <td class="col-sm-1 col-md-1 text-center"><strong>$0.00</strong></td>
+                        <td class="col-sm-1 col-md-1 text-center"><strong>{{getItemPrice(item) | currency}}</strong></td>
+                        <td class="col-sm-1 col-md-1 text-center"><strong>{{getItemSubtotal(item) | currency}}</strong></td>
                         <td class="col-sm-1 col-md-1">
-                            <button type="button" class="btn btn-danger">
+                            <button type="button" class="btn btn-danger" ng-click="removeItem(item.id)">
                                 <span class="glyphicon glyphicon-remove"></span> Remove
                             </button>
                         </td>
@@ -54,7 +61,7 @@
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td><h5>Subtotal</h5></td>
-                        <td class="text-right"><h5><strong>$0.00</strong></h5></td>
+                        <td class="text-right"><h5><strong>{{getCartSubtotal() | currency}}</strong></h5></td>
                     </tr>
                     <tr>
                         <td>&nbsp;</td>
@@ -68,23 +75,23 @@
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td><h3>Total</h3></td>
-                        <td class="text-right"><h3><strong>$0.00</strong></h3></td>
+                        <td class="text-right"><h3><strong ng-bind="getCartTotal() | currency">$0.00</strong></h3></td>
                     </tr>
                     <tr>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>
-                            <button type="button" class="btn btn-danger">
+                            <button type="button" class="btn btn-danger" ng-click="emptyCart()">
                                 <span class="glyphicon glyphicon-remove"></span> Empty Cart
                             </button>
                         </td>
                         <td>
-                            <a ui-sref="products" class="btn btn-default">
+                            <a ui-sref="swag" class="btn btn-default">
                                 <span class="glyphicon glyphicon-shopping-cart"></span> Continue Shopping
                             </a>
                         </td>
-                        <td>
-                            <button class="btn btn-block btn-link">
+                        <td class="text-right">
+                            <button class="btn btn-primary">
                                 <i class="glyphicon glyphicon-ok"></i> Checkout
                             </button>
                         </td>
