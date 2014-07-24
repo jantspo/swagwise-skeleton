@@ -46,7 +46,7 @@
                             </div>
                         </td>
                         <td class="col-sm-1 col-md-1 text-center">
-                            <input type="number" class="form-control" ng-model="item.quantity" ng-change="updateItem(item)">
+                            <input type="number" class="form-control" min="0" ng-model="item.quantity" ng-change="updateItem(item)">
                         </td>
                         <td class="col-sm-1 col-md-1 text-center"><strong>{{getItemPrice(item) | currency}}</strong></td>
                         <td class="col-sm-1 col-md-1 text-center"><strong>{{getItemSubtotal(item) | currency}}</strong></td>

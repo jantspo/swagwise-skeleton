@@ -4,21 +4,32 @@
             <div class="panel-body">
                 <h2 class="text-center">Login</h2>
 
-                <div class="alert alert-{{alert.type}}"></div>
+                <div class="alert alert-{{alert.type}}" ng-if="alert" ng-bind="alert.message"></div>
 
-                <form method="post" name="loginForm">
+                <form method="post" ng-submit="login()" name="loginForm">
 
                     <div class="form-group">
-                        <input type="email" name="email" class="form-control input-lg"
+                        <input type="email" name="email" ng-model="email" class="form-control input-lg"
                                placeholder="Email" required autofocus>
                     </div>
-
-                    <div class="form-group">
-                        <input type="password" name="password" class="form-control input-lg"
-                               placeholder="Password" required>
+                    <div class="help-block text-danger" ng-if="LoginForm.email.$dirty"
+                         ng-messages="LoginForm.email.$error">
+                        <div ng-message="required">Your email address is required.</div>
+                        <div ng-message="email">Your email address is invalid.</div>
                     </div>
 
-                    <button type="submit" class="btn btn-lg btn-block btn-success">
+                    <div class="form-group">
+                        <input type="password" name="password" ng-model="password" class="form-control input-lg"
+                               placeholder="Password" required>
+                    </div>
+                    <div class="help-block text-danger my-special-animation"
+                         ng-if="LoginForm.confirmPassword.$dirty"
+                         ng-messages="LoginForm.confirmPassword.$error">
+                        <div ng-message="required">You must confirm password.</div>
+                        <div ng-message="repeat">Passwords do not match.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-lg btn-block btn-success" ng-disabled="loginFrom.$invalid">
                         Sign In
                     </button>
                 </form>

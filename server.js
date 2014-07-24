@@ -6,7 +6,13 @@ var express      = require('express'),
     fs           = require('fs'),
     logger       = require('morgan'),
     mongoose     = require('mongoose'),
-    uriUtil      = require('mongodb-uri');
+    uriUtil      = require('mongodb-uri'),
+    cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser'),
+    passport     = require('passport'),
+    session      = require('express-session'),
+    LocalStrategy = require('passport-local').Strategy,
+    bcrypt        = require('bcrypt-nodejs');
 
 
 
@@ -56,15 +62,64 @@ conn.once('open', function() {
 /* ================= REGISTER MODULES ===================== */
 
 app.use(logger('dev'));                                 		        // log every request to the console
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'app')));		            // set the static files location
+app.use(session({ secret: 'blackwidow straw' }));                       // Encryption key/salt
+app.use(passport.initialize());                                         // Initializes passport
+app.use(passport.session());                                            // Creates a passport session
+app.use(function(req, res, next) {                          /* Add the following after express.static */
+    if (req.user) {
+        res.cookie('user', JSON.stringify(req.user));
+    }
+    next();
+});
+/* ===================== PASSPORT ========================= */
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    var User = mongoose.model('User');
+
+    User.findById(id, function(err, user) {
+        done(err, user);
+    });
+});
+
+passport.use(new LocalStrategy({ usernameField: 'email' }, function(email, password, done) {
+    var User = mongoose.model('User');
+
+    User.findOne({ email: email }, function(err, user) {
+        if (err) return done(err);
+        if (!user) return done(null, false);
+
+        function cb(err, isMatch) {
+            if (err) return done(err);
+            if (isMatch) return done(null, user);
+            return done(null, false);
+        }
+        bcrypt.compare(password, user.password, function(err, isMatch) {
+            if (err) return cb(err);
+            cb(null, isMatch);
+        });
+    });
+}));
 
 /* ======================== ROUTES ========================= */
 /*========================= Models==========================*/
+
 fs.readdirSync(__dirname + '/models').forEach(function(filename) {
     if(~filename.indexOf('.js')) require(__dirname + '/models/' + filename)
 });
 
 require('./routes.js')(app);                            		        // configure our routes, passing in app reference
+
+
+/* Add the following after the MODELS */
+
+
 
 /* =============== START APP (THIS GOES LAST) ============== */
 
