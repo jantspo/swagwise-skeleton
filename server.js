@@ -12,13 +12,24 @@ var express      = require('express'),
     passport     = require('passport'),
     session      = require('express-session'),
     LocalStrategy = require('passport-local').Strategy,
-    bcrypt        = require('bcrypt-nodejs');
-
+    bcrypt        = require('bcrypt-nodejs'),
+    http         = require('http'),
+    https        = require('https');
 
 
 /* ===================== CONFIGURATION ==================== */
+var app = express();
+
+var privateKey   = fs.readFileSync('cert/server.key', 'utf8');
+var certificate  = fs.readFileSync('cert/server.crt', 'utf8');
+var credentials  = {key: privateKey, cert: certificate};
+
+var httpServer   = http.createServer(app);
+var httpsServer  = https.createServer(credentials, app);
+
 
 var port = process.env.PORT || 9001;					                // Default port or port 9001
+var sslport = 8443;
 /*
  * Mongoose by default sets the auto_reconnect option to true.
  * We recommend setting socket options at both the server and replica set level.
@@ -55,8 +66,11 @@ mongoose.connect(mongooseUri, options);
 conn.on('error', console.error.bind(console, 'connection error:'));
 conn.once('open', function() {
     // Wait for the database connection to establish, then start the app.
-    app.listen(port);
+   httpServer.listen(port);
+   httpsServer.listen(sslport)
     console.log('The MEAN is served up at http://localhost:' + port);
+    console.log('The MEAN is served up at http://localhost:' + sslport);
+
 });
 
 /* ================= REGISTER MODULES ===================== */
@@ -108,20 +122,24 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, function(email, passw
 }));
 
 /* ======================== ROUTES ========================= */
+require('./routes.js')(app);
 /*========================= Models==========================*/
 
 fs.readdirSync(__dirname + '/models').forEach(function(filename) {
     if(~filename.indexOf('.js')) require(__dirname + '/models/' + filename)
 });
 
-require('./routes.js')(app);                            		        // configure our routes, passing in app reference
+                            		        // configure our routes, passing in app reference
 
 
 /* Add the following after the MODELS */
 
 
 
+
 /* =============== START APP (THIS GOES LAST) ============== */
+
+
 
 exports = module.exports = app;                                         // expose app
 

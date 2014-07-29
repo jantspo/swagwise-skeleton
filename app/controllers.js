@@ -130,8 +130,14 @@
         var product_id = $stateParams.id;
 
 //        $scope.imageInterval = 3000;
+//todo find how to match some tags but not all
 
-        $scope.item = SwagService.get({id: product_id});
+        $scope.item = SwagService.get({id: product_id}, function(item){
+            $scope.relatedSwag = SwagService.query({tags: item.tags[1]});
+
+        });
+
+
     });
 
     // Inject in the CartService
